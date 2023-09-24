@@ -11,25 +11,25 @@ void InitArray(Array *arr){
     arr->size = 0;
 }
 
-void Push(int value, Array *arr){
-    int lastElementPos = arr->size - 1;
-    arr->size++;
-    if(arr->size > 4){
-        arr->arr = (int*)realloc(arr->arr, arr->size * sizeof(int));
+void Push(int value, Array *array){
+    int lastElementPos = array->size - 1;
+    array->size++;
+    if(array->size > 4){
+        array->arr = (int*)realloc(array->arr, array->size * sizeof(int));
     }
-    arr->arr[lastElementPos + 1] = value;
+    array->arr[lastElementPos + 1] = value;
 }
 
-void Release(Array *arr, int pos){
+void Release(Array *array, int pos){
     int i = 0;
-    for(i=pos-1; i<arr->size-1; i++)
+    for(i=pos-1; i<array->size-1; i++)
     {
-        arr->arr[i] = arr->arr[i + 1];
+        array->arr[i] = array->arr[i + 1];
     }
-    arr->size--;
-    if(arr->size <= 0){
-        free(arr);
+    array->size--;
+    if(array->size <= 0){
+        free(array);
     }else{
-        arr->arr = realloc(arr->arr, arr->size * sizeof(int));
+        array->arr = realloc(array->arr, array->size * sizeof(int));
     }
 }
