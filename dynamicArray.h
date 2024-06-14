@@ -2,34 +2,51 @@
 #include <stdlib.h>
 
 typedef struct{
-    int* arr;
+    void **memory;
     int size;
-}Array;
+    int item_size;
+}List;
 
-void InitArray(Array *arr){
-    arr->arr = (int*)malloc(4 * sizeof(int));
-    arr->size = 0;
-}
-
-void Push(int value, Array *array){
-    int lastElementPos = array->size - 1;
-    array->size++;
-    if(array->size > 4){
-        array->arr = (int*)realloc(array->arr, array->size * sizeof(int));
-    }
-    array->arr[lastElementPos + 1] = value;
-}
-
-void Release(Array *array, int pos){
-    int i = 0;
-    for(i=pos-1; i<array->size-1; i++)
+void Push(List *list, void* value){
+    list->memory[list->size] = value;
+    list->size++;
+    if(list->size % 4 == 0 && list->size != 1)
     {
-        array->arr[i] = array->arr[i + 1];
+       void** newMemory = realloc(list->memory, (list->size + 4) * list->item_size);
+       if(newMemory != NULL)
+       {
+            list->memory = newMemory;
+       }
     }
-    array->size--;
-    if(array->size <= 0){
-        free(array);
+}
+
+List* Create(int item_size)
+{
+    List *my_struct;
+    my_struct = malloc(sizeof(List));
+    my_struct->memory = malloc(4 * item_size);
+    my_struct->size = 0;
+    my_struct->item_size = item_size;
+    return my_struct;
+}
+
+void Release(List *list, int pos){
+    int i = 0;
+    for(i=pos; i<list->size-1; i++)
+    {
+        list->memory[i] = list->memory[i + 1];
+    }
+    list->size--;
+    if(list->size <= 0){
+        free(list);
     }else{
-        array->arr = realloc(array->arr, array->size * sizeof(int));
+        if(list->size % 4 == 0)
+        {
+            void** newMemory = realloc(list->memory, list->size *     list->item_size);
+            if(newMemory != NULL)
+            {
+                list->memory = newMemory;
+            }
+        }
     }
 }
